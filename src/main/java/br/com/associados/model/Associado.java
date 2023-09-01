@@ -2,10 +2,14 @@ package br.com.associados.model;
 
 import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,11 +24,19 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Associado {
     
-    @Id
-    private UUID uuid = UUID.randomUUID();
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+    @Type(type = "uuid-char")
+	@Column(name = "uuid", updatable = false, unique = true, nullable = false, columnDefinition = "varchar(36)")
+	private UUID uuid;
 
+    @Column(name = "documento",  length = 14)
     private String documento;
-    private String tipo_pessoa;
+
+    @Column(name = "tipoPessoa",  length = 2)
+    private String tipoPessoa;
+
+    @Column(name = "nome", nullable = false, length = 50)    
     private String nome;
 
     
@@ -33,7 +45,7 @@ public class Associado {
         return "{" +
             " uuid='" + getUuid() + "'" +
             ", documento='" + getDocumento() + "'" +
-            ", tipo_pessoa='" + getTipo_pessoa() + "'" +
+            ", tipo_pessoa='" + getTipoPessoa() + "'" +
             ", nome='" + getNome() + "'" +
             "}";
     }
