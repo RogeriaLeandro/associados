@@ -12,4 +12,7 @@ ________________________________________________
 
    Password: associados
 
+  ![image](https://github.com/RogeriaLeandro/associados/assets/72103490/3f51d343-0eac-463f-98a3-734eb7f8bf6c)
+
+
 
