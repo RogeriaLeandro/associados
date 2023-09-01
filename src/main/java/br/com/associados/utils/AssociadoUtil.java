@@ -2,8 +2,12 @@ package br.com.associados.utils;
 
 import java.util.InputMismatchException;
 
+import org.springframework.stereotype.Component;
+
 import br.com.associados.model.Associado;
 
+
+@Component
 public class AssociadoUtil {
     
     public boolean isCPF(String CPF) {
