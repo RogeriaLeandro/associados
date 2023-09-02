@@ -2,6 +2,7 @@ package br.com.associados.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -20,9 +21,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import br.com.associados.exceptions.DocumentoInvalidoException;
-import br.com.associados.exceptions.EntidadeNaoEncontradaException;
+import br.com.associados.exceptions.AssociadoNaoEncontradoException;
+import br.com.associados.exceptions.FormatoDocumentoInvalidoException;
+import br.com.associados.exceptions.TipoPessoaInconsistenteException;
 import br.com.associados.model.Associado;
+import br.com.associados.model.TipoPessoa;
 import br.com.associados.repositories.AssociadoRepository;
 import br.com.associados.utils.FormatadorUtil;
 import br.com.associados.utils.RegexUtil;
@@ -38,6 +41,8 @@ public class AssociadoService {
     	
     @Value("${app.config.qtd-registros-pagina}")
     private int qtdRegistrosPorPagina = 5;
+
+    private static final int TAMANHO_CPF = 11;
 
     @Autowired
 	private AssociadoRepository associadoRepository;
@@ -67,7 +72,31 @@ public class AssociadoService {
         return toDTO(associado);
     }
 	
-    private AssociadoDTO toDTO(Associado associado) {
+
+    public AssociadoDTO alterarAssociado(String id, AssociadoRequestDTO associadoRequestDTO) {
+        var associado = getAssociado(id);
+
+        if (Objects.nonNull(associadoRequestDTO.getNome())) {
+            associado.setNome(associadoRequestDTO.getNome());
+        }
+
+        if (Objects.nonNull(associadoRequestDTO.getDocumento())) {
+
+            if (!associadoRequestDTO.getDocumento().matches(RegexUtil.REGEX_DOCUMENTO)) {
+                throw new FormatoDocumentoInvalidoException("O documento informado não é válido");
+            }
+
+            var documentoFormatado = formataDocumentoAssociado(associadoRequestDTO.getDocumento());
+            associado.setDocumento(documentoFormatado.trim());
+            if (Objects.nonNull(associadoRequestDTO.getTipoPessoa())) {
+                associado.setTipoPessoa(getTipoPessoa(associadoRequestDTO.getTipoPessoa(), documentoFormatado));
+            }
+        }
+
+        return toDTO(associadoRepository.save(associado));
+    }
+
+        private AssociadoDTO toDTO(Associado associado) {
         return AssociadoDTO.builder()
                 .id(associado.getUuid().toString())
                 .nome(associado.getNome())
@@ -75,60 +104,28 @@ public class AssociadoService {
                 .tipoPessoa(associado.getTipoPessoa())
                 .build();
     }
+    
+    private Associado getAssociado(String id) {
+        return associadoRepository.findById(id).orElseThrow(() -> new AssociadoNaoEncontradoException("Não foi possível encontrar um associado para o ID: " + id));
+    }
 
-	// public Associado findById(UUID uuid) {
-	// 	return null;
-    //     // Optional<Associado> associado = associadoRepository.findById(uuid);
-	// 	// return associado.get();
-		
-	// }
+    private Associado toEntity(AssociadoRequestDTO associadoRequestDTO) {
+        var documentoFormatado = formataDocumentoAssociado(associadoRequestDTO.getDocumento()).trim();
+        var associado = new Associado();
+        associado.setUuid(UUID.randomUUID());
+        associado.setDocumento(documentoFormatado);
+        associado.setNome(associadoRequestDTO.getNome());
+        associado.setTipoPessoa(getTipoPessoa(associadoRequestDTO.getTipoPessoa(), documentoFormatado));
+        return associado;
+    }
 
-    // public Associado findByDocumento(String documento) {
-	// 	Associado associado = associadoRepository.buscaAssociadoPorDocumento(documento);
-	// 	return associado;
-		
-	// }
-
-    // /**
-    //  * [cadastrarAssociado description]
-    //  *
-    //  * @return  boolean [return description]
-    //  * método cadastra tanto um novo associado quanto altera um associado
-    //  */
-	// public boolean cadastrarAssociado(Associado associado) {
-		
-    //     boolean documentoValido = associadoUtil.validaDocumento(associado);
-	// 	// if (documentoValido) {
-    //     //     try {
-    //     //         associadoRepository.save(associado);
-    //     //         return true;
-    //     //     } catch (DocumentoInvalidoException e){
-    //     //         throw new DocumentoInvalidoException ("Associado não pode ser cadastrado pois o documento não é válido.");
-    //     //     }
-    //     // }
-
-    //     return documentoValido;
-
-	// }
-
-    // public void deleteAssociado(UUID uuid) {
-
-    //     try {
-
-    //         //TODO Não deve permitir excluir um associado que possua boletos que ainda não foram pagos.
-    //         //TODO Fazer essa condição e lançar exceção caso haja boleto
-	// 		associadoRepository.deleteById(uuid);
-	// 	} catch (EmptyResultDataAccessException e) {
-    //         throw new EntidadeNaoEncontradaException(
-    //             String.format("Não existe Associado para o código %d", uuid));
-	// 	}
-
-    // }
-
-    // public Page<AssociadoDTO> findByDocumentoByDocumento(String documento) {
-    //     return null;
-    // }
-
-
-
+    private TipoPessoa getTipoPessoa(TipoPessoa tipoPessoa, String documentoFormatado) {
+        if (Objects.nonNull(tipoPessoa)) {
+            if (tipoPessoa.getSizeDoc() != documentoFormatado.length()) {
+                throw new TipoPessoaInconsistenteException("Tipo de documento não bate com o tipo pessoa informado");
+            }
+            return tipoPessoa;
+        }
+        return documentoFormatado.length() == TAMANHO_CPF ? TipoPessoa.PF : TipoPessoa.PJ;
+    }
 }

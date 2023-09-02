@@ -114,25 +114,16 @@ public class AssociadoController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(associadoService.cadastrarAssociado(associadoRequestDTO));
 	}
 
-	// @Operation(summary = "Altera Informações de um Associado")
-	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
-    //     @ApiResponse(code = 204, message = "No Content"),
-    //     @ApiResponse(code = 400, message = "Bad Request"),
-    //     @ApiResponse(code = 401, message = "Unauthorized"),
-    //     @ApiResponse(code = 500, message = "Internal Server Error")})
-	// @PutMapping(value = "/{uuid}")
-	// public ResponseEntity<String> alteraAssociado(@PathVariable UUID uuid, @RequestBody Associado associado) {
-		
-	// 	Associado associadoAtual = associadoService.findById(uuid);
-		
-	// 	if(associadoAtual != null) {
-	// 		BeanUtils.copyProperties(associado, associadoAtual, "uuid");
-	// 		associadoService.cadastrarAssociado(associadoAtual);
-	// 		return ResponseEntity.status(HttpStatus.OK).body("Associado Alterado");
-	// 	} else {
-	// 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Associado Não Encontrado");
-	// 	}
-	// }
+	@Operation(summary = "Altera dados de um associado")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Associado alterado", content = @Content(schema = @Schema(implementation = AssociadoRequestDTO.class))),
+			@ApiResponse(code = 400, message = "Erro ao cadastrar associado")})
+	@PutMapping("/{id}")
+	public ResponseEntity<AssociadoDTO> alterarAssociado(@PathVariable @Pattern(regexp = RegexUtil.REGEX_ASSOCIADO_ID, message = "O ID deve ter formato de UUID")
+											   final String id, @RequestBody AssociadoRequestDTO associadoRequestDTO) {
+		return ResponseEntity.status(HttpStatus.OK).body(associadoService.alterarAssociado(id, associadoRequestDTO));
+	}
+
 	
 	// @Operation(summary = "Apaga um Associado da base de Associados")
 	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
