@@ -8,12 +8,15 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import br.com.associados.exceptions.DocumentoInvalidoException;
 import br.com.associados.exceptions.EntidadeNaoEncontradaException;
 import br.com.associados.model.Associado;
+import br.com.associados.model.AssociadoDTO;
 import br.com.associados.repositories.AssociadoRepository;
 import br.com.associados.utils.AssociadoUtil;
 
@@ -28,17 +31,34 @@ public class AssociadoService {
 
     private static Logger logger = LoggerFactory.getLogger(AssociadoService.class);
 
-	public List<Associado> findAll(){
-		
-        Object[] retorno = associadoRepository.findAll();
+	// public Page<AssociadoDTO> findAll(Pageable pageable){
+	   
+    // //    List<AssociadoDTO> listaAssociados = associadoRepository.findAll(pageable);
         
-        List<Associado> listaAssociados = 
-
-
         
-        return associadoRepository.findAll();
-	}
+       
+     
+    //     return listaAssociados;
+	// }
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	public Associado findById(UUID uuid) {
 		Optional<Associado> associado = associadoRepository.findById(uuid);
 		return associado.get();

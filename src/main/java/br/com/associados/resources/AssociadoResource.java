@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,44 +24,51 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.associados.model.Associado;
+import br.com.associados.model.AssociadoDTO;
 import br.com.associados.services.AssociadoService;
 import br.com.associados.utils.AssociadoUtil;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.Tag;
 @Slf4j
-@Tag(name = "associado-resource", description = "API de Associados") 
+// @Tag(name = "associado-resource", description = "API de Associados")
 @Validated
 @RestController
 @RequestMapping(value = "/associado")
 public class AssociadoResource {
-    @Autowired
+   
+	@Autowired
     private AssociadoService associadoService;
-    @Autowired
+    
+	@Autowired
     private AssociadoUtil associadoUtil;
+
     private static Logger logger = LoggerFactory.getLogger(AssociadoResource.class);
-	@Operation(summary = "Consulta associados")
-    @ApiResponse(responseCode = "200", description = "Lista Associados")
+
+	// @Operation(summary = "Consulta Associados")
+	// @ApiResponse(responseCode = "200", description = "Retorno de Lista de Associados")
     @GetMapping
-	public ResponseEntity<List<Associado>> listaAssociados() {
-		List<Associado> list = associadoService.findAll();
-		return ResponseEntity.ok().body(list);
+	public ResponseEntity<Page<AssociadoDTO>> listaAssociados(@PageableDefault(size = 10, page = 1) Pageable pageable) {
+		//TODO Paginar essa chamada
+		// List<Associado> list = associadoService.findAll();
+		// return ResponseEntity.ok().body(list);
 	}
 	
-	@GetMapping(value = "/{uuid}")
-	public ResponseEntity<Associado> associadoporId(@PathVariable UUID id) {
-		Associado associado = associadoService.findById(id);
-		return ResponseEntity.ok().body(associado);
-	}
+	// @GetMapping(value = "/{uuid}")
+	// public ResponseEntity<Associado> associadoporId(@PathVariable UUID uuid, @Pattern(regexp = regex) final UUID uuid) {
+	// 	return associadoService.findById(uuid)
+	// 		.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent.build());
+	// }
 
-    @GetMapping(value = "/{documento}")
-	public ResponseEntity<Associado> associadoporDocumento(@PathVariable String documento) {
-		Associado associado = associadoService.findByDocumento(documento);
-		return ResponseEntity.ok().body(associado);
-	}
+    // @GetMapping(value = "/{documento}")
+	// public ResponseEntity<Associado> associadoporDocumento(@PathVariable String documento) {
+	// 	return associadoService.findByDocumentondById(uuid)
+	// 		.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent.build());
+	// }
 
     @PostMapping()
-	public ResponseEntity<String> cadastrarAssociado(@RequestBody Associado associado) {
+	public ResponseEntity<String> cadastrarAssociado(@RequestBody @NonNull @Valid Associado associado) {
 	
         boolean documentoValido = associadoService.cadastrarAssociado(associado);
 
@@ -68,7 +78,7 @@ public class AssociadoResource {
 		} else {
 			if(associado.getTipoPessoa().equals("PF")){
                 return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("CPF do Associado Inválido.");
-            } else {
+     	} else {
                 return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("CNPJ do Associado Inválido.");
             } 
 		}
