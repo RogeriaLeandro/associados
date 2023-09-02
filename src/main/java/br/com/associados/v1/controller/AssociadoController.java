@@ -3,6 +3,7 @@ package br.com.associados.v1.controller;
 import java.util.List;
 import java.util.UUID;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.websocket.server.PathParam;
@@ -30,10 +31,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.associados.model.Associado;
-import br.com.associados.model.AssociadoDTO;
 import br.com.associados.repositories.AssociadoRepository;
 import br.com.associados.services.AssociadoService;
 import br.com.associados.utils.RegexUtil;
+import br.com.associados.v1.dto.AssociadoDTO;
+import br.com.associados.v1.dto.AssociadoRequestDTO;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.annotations.Api;
@@ -43,6 +45,8 @@ import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Slf4j
 @Api(tags = "associado-controller")
@@ -101,28 +105,14 @@ public class AssociadoController {
 	}
 
 
-	// @Operation(summary = "Cadastra um Novo Associado")
-	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
-    //     @ApiResponse(code = 204, message = "No Content"),
-    //     @ApiResponse(code = 400, message = "Bad Request"),
-    //     @ApiResponse(code = 401, message = "Unauthorized"),
-    //     @ApiResponse(code = 500, message = "Internal Server Error")})
-    // @PostMapping()
-	// public ResponseEntity<String> cadastrarAssociado(@RequestBody @NonNull @Validated Associado associado) {
-	
-    //     //boolean documentoValido = associadoService.cadastrarAssociado(associado);
-
-	// 	if (documentoValido) {
-	// 			logger.info("Associado Cadastrado");
-	// 			return ResponseEntity.status(HttpStatus.CREATED).body("Associado cadastrado");
-	// 	} else {
-	// 		if(associado.getTipoPessoa().equals("PF")){
-    //             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("CPF do Associado Inválido.");
-    //  	} else {
-    //             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("CNPJ do Associado Inválido.");
-    //         } 
-	// 	}
-	// }
+	@Operation(summary = "Cadastra um associado")
+	@ApiResponses(value = {
+			@ApiResponse(code = 201, message = "Associado cadastrado", content = @Content(schema = @Schema(implementation = AssociadoRequestDTO.class))),
+			@ApiResponse(code = 400, message = "Erro ao cadastrar associado")})
+	@PostMapping
+	public ResponseEntity<AssociadoDTO> cadastrarAssociado(@RequestBody @Valid AssociadoRequestDTO associadoRequestDTO) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(associadoService.cadastrarAssociado(associadoRequestDTO));
+	}
 
 	// @Operation(summary = "Altera Informações de um Associado")
 	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
