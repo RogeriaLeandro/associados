@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.associados.model.Associado;
 import br.com.associados.repositories.AssociadoRepository;
-import br.com.associados.services.AssociadoService;
 import br.com.associados.utils.RegexUtil;
 import br.com.associados.v1.dto.AssociadoDTO;
 import br.com.associados.v1.dto.AssociadoRequestDTO;
+import br.com.associados.v1.services.AssociadoService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.annotations.Api;
@@ -125,19 +125,13 @@ public class AssociadoController {
 	}
 
 	
-	// @Operation(summary = "Apaga um Associado da base de Associados")
-	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
-    //     @ApiResponse(code = 204, message = "No Content"),
-    //     @ApiResponse(code = 400, message = "Bad Request"),
-    //     @ApiResponse(code = 401, message = "Unauthorized"),
-    //     @ApiResponse(code = 500, message = "Internal Server Error")})
-	// @CrossOrigin("*")
-	// @DeleteMapping(value = "/{id}")
-	// public ResponseEntity<Void> deleteUsuario(@PathVariable UUID id) {
-    //     //TODO Verificar se Associado possui boletos que ainda não foram pagos (criar Boletos)
-        
-    //     associadoService.deleteAssociado(id);
-	// 	return ResponseEntity.noContent().build();
-	// }
+	@Operation(summary = "Exclui um associado")
+	@DeleteMapping(value = "/{id}")
+	@ApiResponse(code = 204, message = "Associado excluído com sucesso")
+	public ResponseEntity<Void> deletarAssociado(@PathVariable @Pattern(regexp = RegexUtil.REGEX_ASSOCIADO_ID, message = "O ID deve ter formato de UUID")
+												  final String id) {
+		associadoService.deletarAssociado(id);
+		return ResponseEntity.noContent().build();
+	}
 
 }
