@@ -1,5 +1,6 @@
 package br.com.associados.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -7,12 +8,15 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import br.com.associados.exceptions.DocumentoInvalidoException;
 import br.com.associados.exceptions.EntidadeNaoEncontradaException;
 import br.com.associados.model.Associado;
+import br.com.associados.model.AssociadoDTO;
 import br.com.associados.repositories.AssociadoRepository;
 import br.com.associados.utils.AssociadoUtil;
 
@@ -27,13 +31,20 @@ public class AssociadoService {
 
     private static Logger logger = LoggerFactory.getLogger(AssociadoService.class);
 
-	public List<Associado> findAll(){
-		return associadoRepository.findAll();
-	}
+	// public Page<AssociadoDTO> findAll(Pageable pageable){
+	   
+    // //    List<AssociadoDTO> listaAssociados = associadoRepository.findAll(pageable);
+        
+        
+       
+     
+    //     return listaAssociados;
+	// }
 	
 	public Associado findById(UUID uuid) {
-		Optional<Associado> associado = associadoRepository.findById(uuid);
-		return associado.get();
+		return null;
+        // Optional<Associado> associado = associadoRepository.findById(uuid);
+		// return associado.get();
 		
 	}
 
@@ -52,14 +63,14 @@ public class AssociadoService {
 	public boolean cadastrarAssociado(Associado associado) {
 		
         boolean documentoValido = associadoUtil.validaDocumento(associado);
-		if (documentoValido) {
-            try {
-                associadoRepository.save(associado);
-                return true;
-            } catch (DocumentoInvalidoException e){
-                throw new DocumentoInvalidoException ("Associado não pode ser cadastrado pois o documento não é válido.");
-            }
-        }
+		// if (documentoValido) {
+        //     try {
+        //         associadoRepository.save(associado);
+        //         return true;
+        //     } catch (DocumentoInvalidoException e){
+        //         throw new DocumentoInvalidoException ("Associado não pode ser cadastrado pois o documento não é válido.");
+        //     }
+        // }
 
         return documentoValido;
 
@@ -77,6 +88,10 @@ public class AssociadoService {
                 String.format("Não existe Associado para o código %d", uuid));
 		}
 
+    }
+
+    public Page<AssociadoDTO> findByDocumentoByDocumento(String documento) {
+        return null;
     }
 
 }
