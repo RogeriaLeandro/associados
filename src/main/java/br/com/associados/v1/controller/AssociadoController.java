@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
+import javax.websocket.server.PathParam;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,19 +88,18 @@ public class AssociadoController {
 				.orElseGet(() -> ResponseEntity.noContent().build());
 	}
 
-	
-	// @Operation(summary = "Consulta Associado por Número de Documento")
-	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
-    //     @ApiResponse(code = 204, message = "No Content"),
-    //     @ApiResponse(code = 400, message = "Bad Request"),
-    //     @ApiResponse(code = 401, message = "Unauthorized"),
-    //     @ApiResponse(code = 500, message = "Internal Server Error")})
-    // @GetMapping(value = "/{documento}")
-	// public ResponseEntity<Associado> associadoporDocumento(@PathVariable String documento) {
-	// 	return null;
-	// 	// return associadoService.findByDocumentoByDocumento(documento)
-	// 	// 	.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent.build());
-	// }
+	@Operation(summary = "Consulta um único associado por CPF ou CNPJ")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Associado"),
+			@ApiResponse(code = 204, message = "Nenhum associado encontrado para o documento informado")})
+	@GetMapping(value = "/documento")
+	public ResponseEntity<AssociadoDTO> consultarAssociadoPorDocumento(@PathParam(value = "documento") @Pattern(regexp = RegexUtil.REGEX_DOCUMENTO, message = "O documento deve ser um CPF ou CNPJ válido")
+																		   final String documento) {
+		return associadoService.consultarAssociadoPorDocumento(documento)
+				.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.noContent().build());
+	}
+
 
 	// @Operation(summary = "Cadastra um Novo Associado")
 	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
