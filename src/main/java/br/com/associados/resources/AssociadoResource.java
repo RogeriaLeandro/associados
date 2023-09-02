@@ -38,7 +38,6 @@ import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 @Slf4j
-// @Tag(name = "associado-resource", description = "API de Associados")
 @Api(tags = "associado-resource")
 @SwaggerDefinition(tags = {
         			@Tag(name = "associado-resource", 
