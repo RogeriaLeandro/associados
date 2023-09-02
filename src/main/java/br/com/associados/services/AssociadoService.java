@@ -41,27 +41,10 @@ public class AssociadoService {
     //     return listaAssociados;
 	// }
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public Associado findById(UUID uuid) {
-		Optional<Associado> associado = associadoRepository.findById(uuid);
-		return associado.get();
+		return null;
+        // Optional<Associado> associado = associadoRepository.findById(uuid);
+		// return associado.get();
 		
 	}
 
@@ -80,14 +63,14 @@ public class AssociadoService {
 	public boolean cadastrarAssociado(Associado associado) {
 		
         boolean documentoValido = associadoUtil.validaDocumento(associado);
-		if (documentoValido) {
-            try {
-                associadoRepository.save(associado);
-                return true;
-            } catch (DocumentoInvalidoException e){
-                throw new DocumentoInvalidoException ("Associado não pode ser cadastrado pois o documento não é válido.");
-            }
-        }
+		// if (documentoValido) {
+        //     try {
+        //         associadoRepository.save(associado);
+        //         return true;
+        //     } catch (DocumentoInvalidoException e){
+        //         throw new DocumentoInvalidoException ("Associado não pode ser cadastrado pois o documento não é válido.");
+        //     }
+        // }
 
         return documentoValido;
 
@@ -105,6 +88,10 @@ public class AssociadoService {
                 String.format("Não existe Associado para o código %d", uuid));
 		}
 
+    }
+
+    public Page<AssociadoDTO> findByDocumentoByDocumento(String documento) {
+        return null;
     }
 
 }

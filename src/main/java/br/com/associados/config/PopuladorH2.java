@@ -9,6 +9,7 @@ import br.com.associados.repositories.AssociadoRepository;
 
 @Configuration
 public class PopuladorH2 implements CommandLineRunner{
+    
     @Autowired
     private AssociadoRepository associadoRepository;
 
