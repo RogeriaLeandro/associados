@@ -8,7 +8,7 @@ import br.com.associados.model.Associado;
 import br.com.associados.repositories.AssociadoRepository;
 
 @Configuration
-public class TestConfig implements CommandLineRunner{
+public class PopuladorH2 implements CommandLineRunner{
     @Autowired
     private AssociadoRepository associadoRepository;
 
