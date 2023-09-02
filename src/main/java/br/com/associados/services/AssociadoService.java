@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
@@ -22,14 +23,17 @@ import org.springframework.stereotype.Service;
 import br.com.associados.exceptions.DocumentoInvalidoException;
 import br.com.associados.exceptions.EntidadeNaoEncontradaException;
 import br.com.associados.model.Associado;
-import br.com.associados.model.AssociadoDTO;
 import br.com.associados.repositories.AssociadoRepository;
 import br.com.associados.utils.FormatadorUtil;
 import br.com.associados.utils.RegexUtil;
+import br.com.associados.v1.dto.AssociadoDTO;
+import br.com.associados.v1.dto.AssociadoRequestDTO;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Service
+@Slf4j
 public class AssociadoService {
     	
     @Value("${app.config.qtd-registros-pagina}")
@@ -46,15 +50,6 @@ public class AssociadoService {
                 .collect(Collectors.toList());
     }
 
-    private AssociadoDTO toDTO(Associado associado) {
-        return AssociadoDTO.builder()
-                .id(associado.getUuid().toString())
-                .nome(associado.getNome())
-                .documento(FormatadorUtil.formatarDocumento(associado.getDocumento()))
-                .tipoPessoa(associado.getTipoPessoa())
-                .build();
-    }
-
     public Optional<AssociadoDTO> consultarAssociado(String id) {
         return associadoRepository.findById(id).map(this::toDTO);
     }
@@ -66,7 +61,21 @@ public class AssociadoService {
     private static String formataDocumentoAssociado(String documento) {
         return documento.replaceAll(RegexUtil.REGEX_LIMPA_DOCUMENTO, "");
     }
+
+    public AssociadoDTO cadastrarAssociado(AssociadoRequestDTO associadoRequestDTO) {
+        var associado = associadoRepository.save(toEntity(associadoRequestDTO));
+        return toDTO(associado);
+    }
 	
+    private AssociadoDTO toDTO(Associado associado) {
+        return AssociadoDTO.builder()
+                .id(associado.getUuid().toString())
+                .nome(associado.getNome())
+                .documento(FormatadorUtil.formatarDocumento(associado.getDocumento()))
+                .tipoPessoa(associado.getTipoPessoa())
+                .build();
+    }
+
 	// public Associado findById(UUID uuid) {
 	// 	return null;
     //     // Optional<Associado> associado = associadoRepository.findById(uuid);

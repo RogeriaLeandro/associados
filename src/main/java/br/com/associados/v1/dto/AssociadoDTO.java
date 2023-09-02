@@ -1,10 +1,11 @@
-package br.com.associados.model;
+package br.com.associados.v1.dto;
 
  import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.beans.BeanUtils;
 
+import br.com.associados.model.TipoPessoa;
 import br.com.associados.utils.RegexUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
