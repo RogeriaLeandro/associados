@@ -25,6 +25,7 @@ import br.com.associados.model.Associado;
 import br.com.associados.model.AssociadoDTO;
 import br.com.associados.repositories.AssociadoRepository;
 import br.com.associados.utils.FormatadorUtil;
+import br.com.associados.utils.RegexUtil;
 import lombok.Builder;
 import lombok.Data;
 
@@ -56,6 +57,14 @@ public class AssociadoService {
 
     public Optional<AssociadoDTO> consultarAssociado(String id) {
         return associadoRepository.findById(id).map(this::toDTO);
+    }
+
+   public Optional<AssociadoDTO> consultarAssociadoPorDocumento(String documento) {
+        return associadoRepository.findByDocumento(formataDocumentoAssociado(documento)).map(this::toDTO);
+    }
+
+    private static String formataDocumentoAssociado(String documento) {
+        return documento.replaceAll(RegexUtil.REGEX_LIMPA_DOCUMENTO, "");
     }
 	
 	// public Associado findById(UUID uuid) {
