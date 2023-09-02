@@ -15,11 +15,11 @@ public class PopuladorH2 implements CommandLineRunner{
 
     @Override
     public void run(String... args) throws Exception {
-        Associado associado1 = new Associado(null, "36104399126", "PF", "Associado 1");
-        Associado associado2 = new Associado(null, "71871128000179", "PJ", "Associado 2");
+        // Associado associado1 = new Associado(null, "36104399126", "PF", "Associado 1");
+        // Associado associado2 = new Associado(null, "71871128000179", "PJ", "Associado 2");
 
-        associadoRepository.save(associado1);
-        associadoRepository.save(associado2);
+        // associadoRepository.save(associado1);
+        // associadoRepository.save(associado2);
     }
 }
 
