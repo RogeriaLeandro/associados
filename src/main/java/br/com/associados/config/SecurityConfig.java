@@ -5,6 +5,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -22,3 +23,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 anyRequest().permitAll();
     }
 }
+
+// public class SecurityConfig {
+    
+//     @Bean
+//     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//         http
+//             .authorizeHttpRequests((authz) -> authz
+//                 .anyRequest().authenticated()
+//             )
+//             .httpBasic(withDefaults());
+//         return http.build();
+//     }
+    
+// }
+
+
+
+//https://cursos.alura.com.br/forum/topico-websecurityconfigureradapter-deprecated-222772
+//Vamos instalar o 17 na minha máquina ou vamos escrever diferente?

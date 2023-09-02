@@ -1,4 +1,4 @@
-package br.com.associados.services;
+package br.com.associados.v1.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,23 +7,16 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import br.com.associados.exceptions.AssociadoNaoEncontradoException;
+import br.com.associados.exceptions.BoletoEmAbertoException;
 import br.com.associados.exceptions.FormatoDocumentoInvalidoException;
 import br.com.associados.exceptions.TipoPessoaInconsistenteException;
+import br.com.associados.integracao.boleto.service.BoletoService;
 import br.com.associados.model.Associado;
 import br.com.associados.model.TipoPessoa;
 import br.com.associados.repositories.AssociadoRepository;
@@ -31,8 +24,6 @@ import br.com.associados.utils.FormatadorUtil;
 import br.com.associados.utils.RegexUtil;
 import br.com.associados.v1.dto.AssociadoDTO;
 import br.com.associados.v1.dto.AssociadoRequestDTO;
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -46,6 +37,9 @@ public class AssociadoService {
 
     @Autowired
 	private AssociadoRepository associadoRepository;
+
+    @Autowired
+    private BoletoService boletoService;
 
     public List<AssociadoDTO> consultaAssociados(int pagina) {
         return associadoRepository.findAll(PageRequest.of(pagina - 1, qtdRegistrosPorPagina))
@@ -96,7 +90,17 @@ public class AssociadoService {
         return toDTO(associadoRepository.save(associado));
     }
 
-        private AssociadoDTO toDTO(Associado associado) {
+    public void deletarAssociado(String id) {
+        var associado = getAssociado(id);
+
+        if (boletoService.possuiBoletoAPagar(associado.getUuid().toString())) {
+            throw new BoletoEmAbertoException("Não é possível deletar um associado com boleto em aberto");
+        }
+
+        associadoRepository.delete(associado);
+    }
+
+    private AssociadoDTO toDTO(Associado associado) {
         return AssociadoDTO.builder()
                 .id(associado.getUuid().toString())
                 .nome(associado.getNome())
@@ -128,4 +132,6 @@ public class AssociadoService {
         }
         return documentoFormatado.length() == TAMANHO_CPF ? TipoPessoa.PF : TipoPessoa.PJ;
     }
+
+
 }
