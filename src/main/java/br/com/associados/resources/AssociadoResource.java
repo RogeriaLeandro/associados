@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.associados.model.Associado;
@@ -36,6 +35,10 @@ public class AssociadoResource {
 
     private static Logger logger = LoggerFactory.getLogger(AssociadoResource.class);
 
+
+	/*
+	 * endpoint listar todos os associados
+	 */
     @GetMapping
 	public ResponseEntity<List<Associado>> listaAssociados() {
 		List<Associado> list = associadoService.findAll();
