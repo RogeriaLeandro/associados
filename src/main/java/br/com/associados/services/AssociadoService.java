@@ -1,5 +1,6 @@
 package br.com.associados.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,7 +29,14 @@ public class AssociadoService {
     private static Logger logger = LoggerFactory.getLogger(AssociadoService.class);
 
 	public List<Associado> findAll(){
-		return associadoRepository.findAll();
+		
+        Object[] retorno = associadoRepository.findAll();
+        
+        List<Associado> listaAssociados = 
+
+
+        
+        return associadoRepository.findAll();
 	}
 	
 	public Associado findById(UUID uuid) {

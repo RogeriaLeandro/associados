@@ -11,5 +11,4 @@ public interface AssociadoRepository extends JpaRepository<Associado, UUID>{
     
 	@Query(value = "SELECT a.* from associado a WHERE a.documento = :documento", nativeQuery = true)
 	public Associado buscaAssociadoPorDocumento(String documento);
-
 }

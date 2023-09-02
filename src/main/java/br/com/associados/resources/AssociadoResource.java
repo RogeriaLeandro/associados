@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,23 +23,22 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.associados.model.Associado;
 import br.com.associados.services.AssociadoService;
 import br.com.associados.utils.AssociadoUtil;
-
+import lombok.extern.slf4j.Slf4j;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.Tag;
+@Slf4j
+@Tag(name = "associado-resource", description = "API de Associados") 
+@Validated
 @RestController
 @RequestMapping(value = "/associado")
 public class AssociadoResource {
-    
     @Autowired
     private AssociadoService associadoService;
-
-    @Autowired 
+    @Autowired
     private AssociadoUtil associadoUtil;
-
     private static Logger logger = LoggerFactory.getLogger(AssociadoResource.class);
-
-
-	/*
-	 * endpoint listar todos os associados
-	 */
+	@Operation(summary = "Consulta associados")
+    @ApiResponse(responseCode = "200", description = "Lista Associados")
     @GetMapping
 	public ResponseEntity<List<Associado>> listaAssociados() {
 		List<Associado> list = associadoService.findAll();
