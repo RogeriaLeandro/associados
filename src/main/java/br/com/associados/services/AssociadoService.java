@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,10 @@ public class AssociadoService {
                 .documento(FormatadorUtil.formatarDocumento(associado.getDocumento()))
                 .tipoPessoa(associado.getTipoPessoa())
                 .build();
+    }
+
+    public Optional<AssociadoDTO> consultarAssociado(String id) {
+        return associadoRepository.findById(id).map(this::toDTO);
     }
 	
 	// public Associado findById(UUID uuid) {

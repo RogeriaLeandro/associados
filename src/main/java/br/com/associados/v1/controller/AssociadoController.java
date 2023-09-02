@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import br.com.associados.model.Associado;
 import br.com.associados.model.AssociadoDTO;
 import br.com.associados.repositories.AssociadoRepository;
 import br.com.associados.services.AssociadoService;
+import br.com.associados.utils.RegexUtil;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.annotations.Api;
@@ -61,7 +63,7 @@ public class AssociadoController {
     private static Logger logger = LoggerFactory.getLogger(AssociadoController.class);
 
 	@Operation(summary = "Consulta todos Associados")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Success") })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Lista Associados") })
     @GetMapping
 	public ResponseEntity<List<AssociadoDTO>> listaAssociados(
 															   @Parameter(description = "Número da Página")
@@ -73,20 +75,19 @@ public class AssociadoController {
 	
 
 
-	// @Operation(summary = "Consulta Associado por UUID")
-	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
-    //     @ApiResponse(code = 204, message = "No Content"),
-    //     @ApiResponse(code = 400, message = "Bad Request"),
-    //     @ApiResponse(code = 401, message = "Unauthorized"),
-    //     @ApiResponse(code = 500, message = "Internal Server Error")})
-	// @GetMapping(value = "/{uuid}")
-	// // public ResponseEntity<Associado> associadoporId(@PathVariable UUID uuid, @Pattern(regexp = regex) final UUID uuid) {
-	// public ResponseEntity<Associado> associadoporId(@PathVariable UUID uuid) {
-	// 	return null;
-	// 	// return associadoService.findById(uuid)
-	// 	// 	.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent.build());
-	// }
+	@Operation(summary = "Consulta um único associado por id")
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Associado"),
+			@ApiResponse(code = 204, message = "Nenhum associado encontrado para o id informado")})
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<AssociadoDTO> consultarAssociado(@PathVariable @Pattern(regexp = RegexUtil.REGEX_ASSOCIADO_ID, message = "O ID deve ter formato de UUID")
+															final String id) {
+		return associadoService.consultarAssociado(id)
+				.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.noContent().build());
+	}
 
+	
 	// @Operation(summary = "Consulta Associado por Número de Documento")
 	// @ApiResponses(value = {  @ApiResponse(code = 200, message = "Success"),
     //     @ApiResponse(code = 204, message = "No Content"),
