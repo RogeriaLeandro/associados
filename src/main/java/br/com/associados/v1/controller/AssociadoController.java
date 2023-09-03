@@ -39,14 +39,15 @@ import br.com.associados.v1.services.AssociadoService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.annotations.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @Slf4j
 @Api(tags = "associado-controller")
@@ -68,7 +69,7 @@ public class AssociadoController {
     private static Logger logger = LoggerFactory.getLogger(AssociadoController.class);
 
 	@Operation(summary = "Consulta todos Associados")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Lista Associados") })
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Lista Associados") })
     @GetMapping
 	public ResponseEntity<List<AssociadoDTO>> listaAssociados(
 															   @Parameter(description = "Número da Página")
@@ -82,8 +83,8 @@ public class AssociadoController {
 
 	@Operation(summary = "Consulta um único associado por id")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Associado"),
-			@ApiResponse(code = 204, message = "Nenhum associado encontrado para o id informado")})
+			@ApiResponse(responseCode = "200", description = "Associado"),
+			@ApiResponse(responseCode = "204", description = "Nenhum associado encontrado para o id informado")})
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<AssociadoDTO> consultarAssociado(@PathVariable @Pattern(regexp = RegexUtil.REGEX_ASSOCIADO_ID, message = "O ID deve ter formato de UUID")
 															final String id) {
@@ -94,8 +95,8 @@ public class AssociadoController {
 
 	@Operation(summary = "Consulta um único associado por CPF ou CNPJ")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Associado"),
-			@ApiResponse(code = 204, message = "Nenhum associado encontrado para o documento informado")})
+			@ApiResponse(responseCode = "200", description = "Associado"),
+			@ApiResponse(responseCode = "204", description = "Nenhum associado encontrado para o documento informado")})
 	@GetMapping(value = "/documento")
 	public ResponseEntity<AssociadoDTO> consultarAssociadoPorDocumento(@PathParam(value = "documento") @Pattern(regexp = RegexUtil.REGEX_DOCUMENTO, message = "O documento deve ser um CPF ou CNPJ válido")
 																		   final String documento) {
@@ -107,8 +108,8 @@ public class AssociadoController {
 
 	@Operation(summary = "Cadastra um associado")
 	@ApiResponses(value = {
-			@ApiResponse(code = 201, message = "Associado cadastrado", content = @Content(schema = @Schema(implementation = AssociadoRequestDTO.class))),
-			@ApiResponse(code = 400, message = "Erro ao cadastrar associado")})
+			@ApiResponse(responseCode = "201", description = "Associado cadastrado", content = @Content(schema = @Schema(implementation = AssociadoRequestDTO.class))),
+			@ApiResponse(responseCode = "400", description = "Erro ao cadastrar associado")})
 	@PostMapping
 	public ResponseEntity<AssociadoDTO> cadastrarAssociado(@RequestBody @Valid AssociadoRequestDTO associadoRequestDTO) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(associadoService.cadastrarAssociado(associadoRequestDTO));
@@ -116,8 +117,8 @@ public class AssociadoController {
 
 	@Operation(summary = "Altera dados de um associado")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Associado alterado", content = @Content(schema = @Schema(implementation = AssociadoRequestDTO.class))),
-			@ApiResponse(code = 400, message = "Erro ao cadastrar associado")})
+			@ApiResponse(responseCode = "200", description = "Associado alterado", content = @Content(schema = @Schema(implementation = AssociadoRequestDTO.class))),
+			@ApiResponse(responseCode = "400", description = "Erro ao cadastrar associado")})
 	@PutMapping("/{id}")
 	public ResponseEntity<AssociadoDTO> alterarAssociado(@PathVariable @Pattern(regexp = RegexUtil.REGEX_ASSOCIADO_ID, message = "O ID deve ter formato de UUID")
 											   final String id, @RequestBody AssociadoRequestDTO associadoRequestDTO) {
@@ -127,7 +128,7 @@ public class AssociadoController {
 	
 	@Operation(summary = "Exclui um associado")
 	@DeleteMapping(value = "/{id}")
-	@ApiResponse(code = 204, message = "Associado excluído com sucesso")
+	@ApiResponse(responseCode = "204", description = "Associado excluído com sucesso")
 	public ResponseEntity<Void> deletarAssociado(@PathVariable @Pattern(regexp = RegexUtil.REGEX_ASSOCIADO_ID, message = "O ID deve ter formato de UUID")
 												  final String id) {
 		associadoService.deletarAssociado(id);
