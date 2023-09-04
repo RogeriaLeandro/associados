@@ -40,18 +40,17 @@ class AssociadoServiceTest {
     @InjectMocks
     private AssociadoService target;
 
-    //TODO : REVER ESSE FUNDAMENTO
-//    @Test
-//    void consultarAssociados() {
-//        var associados = criarAssociados();
-//        Page<Associado> pageAssociados = new PageImpl(associados);
-//        var associadosDTO = criarAssociadosDTO(associados);
-//        doReturn(pageAssociados).when(associadoRepository).findAll(PageRequest.of(1 - 1, 5));
-//        var actual = target.consultarAssociados();
-//        assertEquals(associadosDTO, actual);
-//        verify(associadoRepository).findAll(PageRequest.of(1 - 1, 5));
-//        verifyNoInteractions(boletoService);
-//    }
+    @Test
+    void consultarAssociados() {
+        var associados = criarAssociados();
+        Page<Associado> pageAssociados = new PageImpl(associados);
+        var associadosDTO = criarAssociadosDTO(associados);
+        doReturn(pageAssociados).when(associadoRepository).findAll(PageRequest.of(1 - 1, 5));
+        var actual = target.consultarAssociados(1);
+        assertEquals(associadosDTO, actual);
+        verify(associadoRepository).findAll(PageRequest.of(1 - 1, 5));
+        verifyNoInteractions(boletoService);
+    }
 
     @Test
     void nenhumAssociadoEncontradoAoConsultarAssociados() {
