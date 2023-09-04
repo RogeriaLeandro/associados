@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@Component
 @FeignClient(name = "Boleto-Api", url = "${integracao.boleto-api.url}")
 public interface BoletoClient {
 
