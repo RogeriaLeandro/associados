@@ -164,13 +164,13 @@ class AssociadoServiceTest {
         associadoAlterado.setId(associado.getId());
         var associadoDTO = criarAssociadoDTO(associadoAlterado);
         doReturn(Optional.of(associado)).when(associadoRepository).findById(ID_ASSOCIADO);
-        doReturn(associadoAlterado).when(associadoRepository).save(associadoAlterado);
+        doReturn(associadoAlterado).when(associadoRepository).save(refEq(associadoAlterado, "id"));
 
         var actual = target.alterarAssociado(ID_ASSOCIADO, associadoRequest);
 
         assertEquals(associadoDTO, actual);
         verify(associadoRepository).findById(ID_ASSOCIADO);
-        verify(associadoRepository).save(associadoAlterado);
+        verify(associadoRepository).save(refEq(associadoAlterado, "id"));
         verifyNoInteractions(boletoService);
     }
 
