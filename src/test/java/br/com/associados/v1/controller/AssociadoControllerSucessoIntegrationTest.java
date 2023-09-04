@@ -1,5 +1,4 @@
 package br.com.associados.v1.controller;
-
 import br.com.associados.integracao.boleto.service.BoletoService;
 import br.com.associados.model.TipoPessoa;
 import br.com.associados.repositories.AssociadoRepository;
@@ -35,9 +34,9 @@ public class AssociadoControllerSucessoIntegrationTest {
     @SpyBean
     private BoletoService boletoService;
 
-    private static final String ENDPOINT_V1_ASSOCIADOS = "http://127.0.0.1:8090/v1/associado";
-    private static final String ENDPOINT_V1_ASSOCIADOS_ID = "http://127.0.0.1:8090/v1/associado/{id}";
-    private static final String ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO = "http://127.0.0.1:8090/v1/associado/documento";
+    private static final String ENDPOINT_V1_ASSOCIADOS = "/v1/associados";
+    private static final String ENDPOINT_V1_ASSOCIADOS_ID = "/v1/associados/{id}";
+    private static final String ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO = "/v1/associados/documento";
 
     @Test
     @SneakyThrows
@@ -68,7 +67,7 @@ public class AssociadoControllerSucessoIntegrationTest {
         var ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         var json = ow.writeValueAsString(associadoRequestDTO);
 
-        mockMvc.perform(put(ENDPOINT_V1_ASSOCIADOS_ID, associado.getUuid())
+        mockMvc.perform(put(ENDPOINT_V1_ASSOCIADOS_ID, associado.getId())
                         .content(json)
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isOk());
@@ -87,7 +86,7 @@ public class AssociadoControllerSucessoIntegrationTest {
     @SneakyThrows
     void sucessoAoConsultarAssociadoPorId() {
         var associado = associadoRepository.findAll(PageRequest.of(0, 1)).getContent().get(0);
-        mockMvc.perform(get(ENDPOINT_V1_ASSOCIADOS_ID, associado.getUuid()))
+        mockMvc.perform(get(ENDPOINT_V1_ASSOCIADOS_ID, associado.getId()))
                 .andExpect(status().isOk());
     }
 
@@ -96,8 +95,8 @@ public class AssociadoControllerSucessoIntegrationTest {
     void sucessoAoDeletarAssociado() {
         var associado = associadoRepository.findAll(PageRequest.of(0, 1)).getContent().get(0);
         //TODO: REMOVER MOCK APOS IMPLEMENTAR API DE BOLETOS
-        doReturn(false).when(boletoService).possuiBoletoAPagar(associado.getUuid().toString());
-        mockMvc.perform(delete(ENDPOINT_V1_ASSOCIADOS_ID, associado.getUuid()))
+        doReturn(false).when(boletoService).possuiBoletoAPagar(associado.getId());
+        mockMvc.perform(delete(ENDPOINT_V1_ASSOCIADOS_ID, associado.getId()))
                 .andExpect(status().isNoContent());
     }
 
