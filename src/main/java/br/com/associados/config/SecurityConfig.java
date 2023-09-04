@@ -1,44 +1,28 @@
 package br.com.associados.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
-@Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+public class SecurityConfig {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().
-                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
-                and().
-                authorizeRequests().
-                antMatchers(HttpMethod.GET, "/v1").permitAll().
-                antMatchers(HttpMethod.POST, "/v1").permitAll().
-                antMatchers(HttpMethod.DELETE, "/v1").permitAll().
-                antMatchers(HttpMethod.PUT, "/v1").permitAll().
-                anyRequest().permitAll();
+    @Bean
+    public UserDetailsService userDetailsService(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User.withUsername("user")
+                .password(bCryptPasswordEncoder.encode("userPass"))
+                .roles("USER")
+                .build());
+        manager.createUser(User.withUsername("admin")
+                .password(bCryptPasswordEncoder.encode("adminPass"))
+                .roles("USER", "ADMIN")
+                .build());
+        return manager;
     }
 }
-
-// public class SecurityConfig {
-    
-//     @Bean
-//     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//         http
-//             .authorizeHttpRequests((authz) -> authz
-//                 .anyRequest().authenticated()
-//             )
-//             .httpBasic(withDefaults());
-//         return http.build();
-//     }
-    
-// }
-
-
-
-//https://cursos.alura.com.br/forum/topico-websecurityconfigureradapter-deprecated-222772
-//Vamos instalar o 17 na minha máquina ou vamos escrever diferente?
