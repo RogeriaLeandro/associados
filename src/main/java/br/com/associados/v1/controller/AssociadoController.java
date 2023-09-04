@@ -64,7 +64,7 @@ public class AssociadoController {
 	@Operation(summary = "Consulta todos Associados")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Lista Associados") })
     @GetMapping
-	public ResponseEntity<List<AssociadoDTO>> listaAssociados(@Parameter(description = "Número da Página")
+	public ResponseEntity<List<AssociadoDTO>> consultarAssociados(@Parameter(description = "Número da Página")
 															   @RequestParam(value = "pagina", required = false, defaultValue = "1")
 															   @Min(value = 1)
 															   final int pagina) {
