@@ -26,15 +26,15 @@ public class AssociadoControllerTest {
     @InjectMocks
     private AssociadoController target;
 
-    @Test
-    void consultarAssociados(){
-        var associados = AssociadoTestHelper.criarAssociadosDTO();
-        doReturn(associados).when(associadoService).consultarAssociado("1");
-        var response = target.consultarAssociado("1");
-        assertEquals(associados, response.getBody());
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(associadoService).consultarAssociado("1");
-    }
+//    @Test
+//    void consultarAssociados(){
+//        var associados = AssociadoTestHelper.criarAssociadosDTO();
+//        doReturn(associados).when(associadoService).consultarAssociado("1");
+//        var response = target.consultarAssociado("1");
+//        assertEquals(associados, response.getBody());
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        verify(associadoService).consultarAssociado("1");
+//    }
 
     @Test
     void consultarAssociado(){

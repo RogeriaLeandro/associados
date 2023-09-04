@@ -35,9 +35,9 @@ public class AssociadoControllerSucessoIntegrationTest {
     @SpyBean
     private BoletoService boletoService;
 
-    private static final String ENDPOINT_V1_ASSOCIADOS = "/v1/associados";
-    private static final String ENDPOINT_V1_ASSOCIADOS_ID = "/v1/associados/{id}";
-    private static final String ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO = "/v1/associados/documento";
+    private static final String ENDPOINT_V1_ASSOCIADOS = "http://127.0.0.1:8090/v1/associado";
+    private static final String ENDPOINT_V1_ASSOCIADOS_ID = "http://127.0.0.1:8090/v1/associado/{id}";
+    private static final String ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO = "http://127.0.0.1:8090/v1/associado/documento";
 
     @Test
     @SneakyThrows
