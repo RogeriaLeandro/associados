@@ -57,7 +57,7 @@ class AssociadoServiceTest {
     void nenhumAssociadoEncontradoAoConsultarAssociados() {
         Page<Associado> pageAssociados = new PageImpl(List.of());
         doReturn(pageAssociados).when(associadoRepository).findAll(PageRequest.of(1 - 1, 5));
-        var actual = target.consultarAssociado("1");
+        var actual = target.consultarAssociados(1);
         assertEquals(List.of(), actual);
         verify(associadoRepository).findAll(PageRequest.of(1 - 1, 5));
         verifyNoInteractions(boletoService);
@@ -66,7 +66,7 @@ class AssociadoServiceTest {
     @Test
     void consultarAssociado() {
         var associado = criarAssociados().get(0);
-        associado.setUuid(UUID.fromString(ID_ASSOCIADO));
+        associado.setId(ID_ASSOCIADO);
         var associadoDTO = Optional.of(criarAssociadoDTO(associado));
         doReturn(Optional.of(associado)).when(associadoRepository).findById(ID_ASSOCIADO);
         var actual = target.consultarAssociado(ID_ASSOCIADO);
@@ -112,7 +112,7 @@ class AssociadoServiceTest {
         var associadoDTO = criarAssociadoDTO(associadoRequest);
         doReturn(associado).when(associadoRepository).save(refEq(associado, "id"));
         var actual = target.cadastrarAssociado(associadoRequest);
-        associadoDTO.setId(associado.getUuid().toString());
+        associadoDTO.setId(associado.getId().toString());
         assertEquals(associadoDTO, actual);
         verify(associadoRepository).save(refEq(associado, "id"));
         verifyNoInteractions(boletoService);
@@ -161,7 +161,7 @@ class AssociadoServiceTest {
         associadoRequest.setNome("Nome alterado");
         var associado = criarAssociados().get(0);
         var associadoAlterado = criarAssociado(associadoRequest);
-        associadoAlterado.setUuid(associado.getUuid());
+        associadoAlterado.setId(associado.getId());
         var associadoDTO = criarAssociadoDTO(associadoAlterado);
         doReturn(Optional.of(associado)).when(associadoRepository).findById(ID_ASSOCIADO);
         doReturn(associadoAlterado).when(associadoRepository).save(associadoAlterado);
@@ -187,7 +187,7 @@ class AssociadoServiceTest {
     @Test
     void erroBoletoEmAbertoAoDeletarAssociado() {
         var associado = criarAssociados().get(0);
-        associado.setUuid(UUID.fromString(ID_ASSOCIADO));
+        associado.setId(ID_ASSOCIADO);
         doReturn(Optional.of(associado)).when(associadoRepository).findById(ID_ASSOCIADO);
         doReturn(true).when(boletoService).possuiBoletoAPagar(ID_ASSOCIADO);
         var exception = assertThrows(BoletoEmAbertoException.class, () -> target.deletarAssociado(ID_ASSOCIADO));
@@ -200,7 +200,7 @@ class AssociadoServiceTest {
     @Test
     void deletarAssociado() {
         var associado = criarAssociados().get(0);
-        associado.setUuid(UUID.fromString(ID_ASSOCIADO));
+        associado.setId(ID_ASSOCIADO);
         doReturn(Optional.of(associado)).when(associadoRepository).findById(ID_ASSOCIADO);
         doReturn(false).when(boletoService).possuiBoletoAPagar(ID_ASSOCIADO);
         target.deletarAssociado(ID_ASSOCIADO);

@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.websocket.server.PathParam;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 import io.swagger.annotations.Api;
 
 import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -49,23 +49,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-@Slf4j
-@Api(tags = "associado-controller")
-@SwaggerDefinition(tags = {
-        			@Tag(name = "associado-controller", 
-		     		description = "API de Operações de Associados")
-					})
+@Tag(name = "associado-controller", description = "API de operações básicas sobre associados")
 @Validated
 @RestController
-@RequestMapping(value = "/v1/associado")
+@Slf4j
+@RequestMapping(value = "/v1/associados")
 public class AssociadoController {
    
 	@Autowired
     private AssociadoService associadoService;
 
-	@Autowired
-    private AssociadoRepository associadoRepository;
-    
     private static Logger logger = LoggerFactory.getLogger(AssociadoController.class);
 
 	@Operation(summary = "Consulta todos Associados")
@@ -75,7 +68,7 @@ public class AssociadoController {
 															   @RequestParam(value = "pagina", required = false, defaultValue = "1")
 															   @Min(value = 1)
 															   final int pagina) {
-		return ResponseEntity.ok().body(associadoService.consultaAssociados(pagina));
+		return ResponseEntity.ok().body(associadoService.consultarAssociados(pagina));
 	}
 	
 

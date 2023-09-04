@@ -10,6 +10,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -39,15 +40,20 @@ public class AssociadoControllerErroIntegrationTest {
     @SpyBean
     private BoletoService boletoService;
 
-    private static final String ENDPOINT_V1_ASSOCIADOS = "/v1/associados";
-    private static final String ENDPOINT_V1_ASSOCIADOS_ID = "/v1/associados/{id}";
-    private static final String ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO = "/v1/associados/documento";
+    @Value("${associado-api.url}")
+    private String associadoApiUrl;
+
+
+    //TODO propertie de apiurl
+    private String ENDPOINT_V1_ASSOCIADOS = "/v1/associados";
+    private String ENDPOINT_V1_ASSOCIADOS_ID = "/v1/associados/{id}";
+    private String ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO = "/v1/associados/documento";
 
     @ParameterizedTest
     @ValueSource(strings = {"1", "  ", "abcd"})
     @SneakyThrows
     void identificadorAssociadoInvalidoAoConsultarAssociado(String idAssociado) {
-        mockMvc.perform(get(ENDPOINT_V1_ASSOCIADOS_ID, idAssociado))
+        mockMvc.perform(get(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS_ID, idAssociado))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").value("consultarAssociado.id: O ID deve ter formato de UUID"));
     }
@@ -56,7 +62,7 @@ public class AssociadoControllerErroIntegrationTest {
     @ValueSource(strings = {"1", "  ", "abcd"})
     @SneakyThrows
     void documentoAssociadoInvalidoAoConsultarAssociadoPorDocumento(String documento) {
-        mockMvc.perform(get(ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO)
+        mockMvc.perform(get(associadoApiUrl + ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO)
                         .queryParam("documento", documento))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").value("consultarAssociadoPorDocumento.documento: O documento deve ser um CPF ou CNPJ válido"));
@@ -74,7 +80,7 @@ public class AssociadoControllerErroIntegrationTest {
         var ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         var json = ow.writeValueAsString(associadoRequestDTO);
 
-        mockMvc.perform(post(ENDPOINT_V1_ASSOCIADOS)
+        mockMvc.perform(post(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS)
                         .content(json)
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest());
@@ -91,7 +97,7 @@ public class AssociadoControllerErroIntegrationTest {
         var ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         var json = ow.writeValueAsString(associadoRequestDTO);
 
-        mockMvc.perform(post(ENDPOINT_V1_ASSOCIADOS)
+        mockMvc.perform(post(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS)
                         .content(json)
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest());
@@ -109,7 +115,7 @@ public class AssociadoControllerErroIntegrationTest {
         var ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         var json = ow.writeValueAsString(associadoRequestDTO);
 
-        mockMvc.perform(post(ENDPOINT_V1_ASSOCIADOS)
+        mockMvc.perform(post(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS)
                         .content(json)
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest())
@@ -129,7 +135,7 @@ public class AssociadoControllerErroIntegrationTest {
         var ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         var json = ow.writeValueAsString(associadoRequestDTO);
 
-        mockMvc.perform(put(ENDPOINT_V1_ASSOCIADOS_ID, associado.getUuid())
+        mockMvc.perform(put(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS_ID, associado.getId())
                         .content(json)
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest())
@@ -148,7 +154,7 @@ public class AssociadoControllerErroIntegrationTest {
         var ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         var json = ow.writeValueAsString(associadoRequestDTO);
         var id = UUID.randomUUID().toString();
-        mockMvc.perform(put(ENDPOINT_V1_ASSOCIADOS_ID, id)
+        mockMvc.perform(put(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS_ID, id)
                         .content(json)
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest())
@@ -159,7 +165,7 @@ public class AssociadoControllerErroIntegrationTest {
     @SneakyThrows
     void falhaAssociadoNaoEncontradoAoDeletarAssociado() {
         var id = UUID.randomUUID().toString();
-        mockMvc.perform(delete(ENDPOINT_V1_ASSOCIADOS_ID, id)
+        mockMvc.perform(delete(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS_ID, id)
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").value("Não foi possível encontrar um associado para o ID: " + id));
@@ -170,8 +176,8 @@ public class AssociadoControllerErroIntegrationTest {
     void falhaAssociadoComBoletoEmAbertoAoDeletarAssociado() {
         var associado = associadoRepository.findAll(PageRequest.of(0, 1)).getContent().get(0);
         //TODO: desligar mock quando subir api de boletos
-        doReturn(true).when(boletoService).possuiBoletoAPagar(associado.getUuid().toString());
-        mockMvc.perform(delete(ENDPOINT_V1_ASSOCIADOS_ID, associado.getUuid())
+        doReturn(true).when(boletoService).possuiBoletoAPagar(associado.getId().toString());
+        mockMvc.perform(delete(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS_ID, associado.getId())
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").value("Não é possível deletar um associado com boleto em aberto"));

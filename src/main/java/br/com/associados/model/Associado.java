@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.Type;
 
 import lombok.AllArgsConstructor;
@@ -26,20 +28,20 @@ import lombok.Setter;
 @AllArgsConstructor
 //@Data
 public class Associado {
-    
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-    @Type(type = "uuid-char")
-	@Column(name = "uuid", updatable = false, unique = true, nullable = false, columnDefinition = "varchar(36)")
-	private UUID uuid;
 
-    @Column(name = "documento", length = 14)
+    @Id
+    @Column(name = "id", updatable = false, unique = true, nullable = false, columnDefinition = "varchar(36)")
+    private String id;
+
+    @Column(name = "documento",  length = 14, nullable = false, unique = true)
+    @Size(min = 11, max = 14)
     private String documento;
 
-    @Column(name = "tipoPessoa", length = 2)
+    @Column(name = "tipoPessoa", nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoPessoa tipoPessoa;
 
-    @Column(name = "nome", nullable = false, length = 50)    
+    @Column(name = "nome", nullable = false, length = 50)
     private String nome;
+
 }

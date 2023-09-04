@@ -41,7 +41,7 @@ public class AssociadoService {
     @Autowired
     private BoletoService boletoService;
 
-    public List<AssociadoDTO> consultaAssociados(int pagina) {
+    public List<AssociadoDTO> consultarAssociados(int pagina) {
         return associadoRepository.findAll(PageRequest.of(pagina - 1, qtdRegistrosPorPagina))
                 .getContent()
                 .stream()
@@ -93,7 +93,7 @@ public class AssociadoService {
     public void deletarAssociado(String id) {
         var associado = getAssociado(id);
 
-        if (boletoService.possuiBoletoAPagar(associado.getUuid().toString())) {
+        if (boletoService.possuiBoletoAPagar(associado.getId().toString())) {
             throw new BoletoEmAbertoException("Não é possível deletar um associado com boleto em aberto");
         }
 
@@ -102,7 +102,7 @@ public class AssociadoService {
 
     private AssociadoDTO toDTO(Associado associado) {
         return AssociadoDTO.builder()
-                .id(associado.getUuid().toString())
+                .id(associado.getId().toString())
                 .nome(associado.getNome())
                 .documento(FormatadorUtil.formatarDocumento(associado.getDocumento()))
                 .tipoPessoa(associado.getTipoPessoa())
@@ -116,7 +116,7 @@ public class AssociadoService {
     private Associado toEntity(AssociadoRequestDTO associadoRequestDTO) {
         var documentoFormatado = formataDocumentoAssociado(associadoRequestDTO.getDocumento()).trim();
         var associado = new Associado();
-        associado.setUuid(UUID.randomUUID());
+        associado.setId(UUID.randomUUID().toString());
         associado.setDocumento(documentoFormatado);
         associado.setNome(associadoRequestDTO.getNome());
         associado.setTipoPessoa(getTipoPessoa(associadoRequestDTO.getTipoPessoa(), documentoFormatado));

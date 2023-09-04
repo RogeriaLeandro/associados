@@ -38,7 +38,7 @@ public final class AssociadoTestHelper {
     private static Associado criarAssociado(TipoPessoa tipoPessoa) {
         var associado = new Associado();
         associado.setDocumento(tipoPessoa == PF ? CPF_NAO_FORMATADO : CNPJ_NAO_FORMATADO);
-        associado.setUuid(UUID.randomUUID());
+        associado.setId(UUID.randomUUID().toString());
         associado.setTipoPessoa(tipoPessoa);
         associado.setNome("NOME");
         return associado;
@@ -59,7 +59,7 @@ public final class AssociadoTestHelper {
 
     public static AssociadoDTO criarAssociadoDTO(Associado associado) {
         return AssociadoDTO.builder()
-                .id(associado.getUuid().toString())
+                .id(associado.getId().toString())
                 .nome(associado.getNome())
                 .documento(FormatadorUtil.formatarDocumento(associado.getDocumento()))
                 .tipoPessoa(associado.getTipoPessoa())
@@ -85,7 +85,7 @@ public final class AssociadoTestHelper {
 
     public static Associado criarAssociado(AssociadoRequestDTO associadoRequest) {
         var associado = new Associado();
-        associado.setUuid(UUID.randomUUID());
+        associado.setId(UUID.randomUUID().toString());
         associado.setDocumento(associadoRequest.getTipoPessoa() == PF ? CPF_NAO_FORMATADO : CNPJ_NAO_FORMATADO);
         associado.setTipoPessoa(associadoRequest.getTipoPessoa());
         associado.setNome(associadoRequest.getNome());

@@ -23,11 +23,15 @@ public final class FormatadorUtil {
 
     private static String formatar(String valor, String mask) {
         try {
-            var mf = new MaskFormatter(mask);
-            mf.setValueContainsLiteralCharacters(false);
-            return mf.valueToString(valor);
+            if (Objects.nonNull(valor) && valor != "") {
+                MaskFormatter mf = new MaskFormatter(mask);
+                mf.setValueContainsLiteralCharacters(false);
+                return mf.valueToString(valor);
+            } else {
+                return "";
+            }
         } catch (ParseException var4) {
-            return null;
+            return valor;
         }
     }
 
