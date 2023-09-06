@@ -127,4 +127,12 @@ public class AssociadoController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@Operation(summary = "Valida um Documento")
+	@DeleteMapping(value = "/{documento}")
+	@ApiResponse(responseCode = "204", description = "Documento Validado")
+	public ResponseEntity<Void> validarDocumento(@PathVariable String documento) {
+		associadoService.validaDocumento(documento);
+		return ResponseEntity.noContent().build();
+	}
+
 }
