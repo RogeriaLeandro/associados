@@ -14,8 +14,7 @@ import java.util.Optional;
 import static br.com.associados.AssociadoTestHelper.*;
 import static br.com.associados.model.TipoPessoa.PF;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AssociadoControllerTest {
@@ -106,6 +105,14 @@ public class AssociadoControllerTest {
         var response = target.deletarAssociado(ID_ASSOCIADO);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         verify(associadoService).deletarAssociado(ID_ASSOCIADO);
+    }
+
+
+    @Test
+    void validaDocumento() {
+        var response = target.validarDocumento(CPF);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(associadoService).validaDocumento(CPF);
     }
 
 }

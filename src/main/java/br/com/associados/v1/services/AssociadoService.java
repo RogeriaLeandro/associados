@@ -7,15 +7,17 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import br.com.associados.exceptions.*;
+import br.com.associados.v1.controller.AssociadoController;
+import br.com.caelum.stella.validation.CNPJValidator;
+import br.com.caelum.stella.validation.CPFValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import br.com.associados.exceptions.AssociadoNaoEncontradoException;
-import br.com.associados.exceptions.BoletoEmAbertoException;
-import br.com.associados.exceptions.FormatoDocumentoInvalidoException;
-import br.com.associados.exceptions.TipoPessoaInconsistenteException;
 import br.com.associados.integracao.boleto.service.BoletoService;
 import br.com.associados.model.Associado;
 import br.com.associados.model.TipoPessoa;
@@ -25,6 +27,8 @@ import br.com.associados.utils.RegexUtil;
 import br.com.associados.v1.dto.AssociadoDTO;
 import br.com.associados.v1.dto.AssociadoRequestDTO;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.swing.text.Document;
 
 @Service
 @Slf4j
@@ -40,6 +44,8 @@ public class AssociadoService {
 
     @Autowired
     private BoletoService boletoService;
+
+    private static Logger logger = LoggerFactory.getLogger(AssociadoService.class);
 
     public List<AssociadoDTO> consultarAssociados(int pagina) {
         return associadoRepository.findAll(PageRequest.of(pagina - 1, qtdRegistrosPorPagina))
@@ -62,8 +68,36 @@ public class AssociadoService {
     }
 
     public AssociadoDTO cadastrarAssociado(AssociadoRequestDTO associadoRequestDTO) {
-        var associado = associadoRepository.save(toEntity(associadoRequestDTO));
-        return toDTO(associado);
+        boolean docEValido = validaDocumento(associadoRequestDTO.getDocumento());
+        if (docEValido){
+            var associado = associadoRepository.save(toEntity(associadoRequestDTO));
+            return toDTO(associado);
+        } else {
+            throw new DocumentoInvalidoException("Este documento é inválido conforme regra nacional.");
+        }
+    }
+
+    public boolean validaDocumento(String documento) {
+
+        if (documento.length() == 11) {
+            CPFValidator cpfValidator = new CPFValidator();
+            try {
+                cpfValidator.assertValid(documento);
+                return true;
+            } catch (Exception e) {
+                logger.error("CPF Inválido");
+                return false;
+            }
+        } else {
+            CNPJValidator cnpjValidator = new CNPJValidator();
+            try {
+                cnpjValidator.assertValid(documento);
+                return true;
+            } catch (Exception e) {
+                logger.error("CNPJ Inválido");
+                return false;
+            }
+        }
     }
 	
 
