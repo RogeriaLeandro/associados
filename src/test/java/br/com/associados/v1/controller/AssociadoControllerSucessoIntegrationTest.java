@@ -34,6 +34,7 @@ public class AssociadoControllerSucessoIntegrationTest {
     @SpyBean
     private BoletoService boletoService;
 
+
     private static final String ENDPOINT_V1_ASSOCIADOS = "/v1/associados";
     private static final String ENDPOINT_V1_ASSOCIADOS_ID = "/v1/associados/{id}";
     private static final String ENDPOINT_V1_CONSULTAR_ASSOCIADO_POR_DOCUMENTO = "/v1/associados/documento";
@@ -94,7 +95,6 @@ public class AssociadoControllerSucessoIntegrationTest {
     @SneakyThrows
     void sucessoAoDeletarAssociado() {
         var associado = associadoRepository.findAll(PageRequest.of(0, 1)).getContent().get(0);
-        //TODO: REMOVER MOCK APOS IMPLEMENTAR API DE BOLETOS
         doReturn(false).when(boletoService).possuiBoletoAPagar(associado.getId());
         mockMvc.perform(delete(ENDPOINT_V1_ASSOCIADOS_ID, associado.getId()))
                 .andExpect(status().isNoContent());
