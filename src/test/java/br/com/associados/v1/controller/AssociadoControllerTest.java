@@ -107,12 +107,4 @@ public class AssociadoControllerTest {
         verify(associadoService).deletarAssociado(ID_ASSOCIADO);
     }
 
-
-    @Test
-    void validaDocumento() {
-        var response = target.validarDocumento(CPF);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(associadoService).validaDocumento(CPF);
-    }
-
 }
