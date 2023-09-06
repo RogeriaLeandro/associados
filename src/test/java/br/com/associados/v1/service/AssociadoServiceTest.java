@@ -24,8 +24,7 @@ import java.util.UUID;
 import static br.com.associados.AssociadoTestHelper.*;
 import static br.com.associados.model.TipoPessoa.PF;
 import static br.com.associados.model.TipoPessoa.PJ;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -109,10 +108,15 @@ class AssociadoServiceTest {
         var associadoRequest = criarAssociadoRequest(PF);
         var associado = criarAssociado(associadoRequest);
         var associadoDTO = criarAssociadoDTO(associadoRequest);
+        associadoDTO.setDocumento(CPF);
+        associadoRequest.setDocumento(CPF_NAO_FORMATADO);
+        associado.setDocumento(CPF_NAO_FORMATADO);
         doReturn(associado).when(associadoRepository).save(refEq(associado, "id"));
+        boolean eValido = target.validaDocumento(associadoDTO.getDocumento());
         var actual = target.cadastrarAssociado(associadoRequest);
         associadoDTO.setId(associado.getId().toString());
         assertEquals(associadoDTO, actual);
+        assertTrue(eValido);
         verify(associadoRepository).save(refEq(associado, "id"));
         verifyNoInteractions(boletoService);
     }
@@ -206,6 +210,15 @@ class AssociadoServiceTest {
         verify(associadoRepository).findById(ID_ASSOCIADO);
         verify(boletoService).possuiBoletoAPagar(ID_ASSOCIADO);
         verify(associadoRepository).delete(associado);
+    }
+
+    @Test
+    void validaDocumento(){
+        var associado = criarAssociados().get(0);
+        associado.setDocumento(CPF);
+        boolean eValido = target.validaDocumento(associado.getDocumento());
+        assertTrue(eValido);
+
     }
 
 }
