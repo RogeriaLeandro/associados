@@ -164,7 +164,7 @@ public class AssociadoControllerErroIntegrationTest {
     @Test
     @SneakyThrows
     void falhaAssociadoNaoEncontradoAoDeletarAssociado() {
-        var id = UUID.randomUUID().toString();
+        var id = "041dc250-724e-45bd-97c5-e3fd1021bebb";
         mockMvc.perform(delete(associadoApiUrl + ENDPOINT_V1_ASSOCIADOS_ID, id)
                         .header("Content-Type", "application/json"))
                 .andExpect(status().isBadRequest())

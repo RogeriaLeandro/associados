@@ -16,9 +16,9 @@ import static br.com.associados.model.TipoPessoa.PJ;
 
 public final class AssociadoTestHelper {
 
-    public static final String CPF = "708.148.020-95";
+    public static final String CPF = "076.174.367-77";
     public static final String CNPJ = "33.670.073/0001-40";
-    public static final String CPF_NAO_FORMATADO = "70814802095";
+    public static final String CPF_NAO_FORMATADO = "07617436777";
     public static final String CNPJ_NAO_FORMATADO = "33670073000140";
     public static final String ID_ASSOCIADO = UUID.randomUUID().toString();
 

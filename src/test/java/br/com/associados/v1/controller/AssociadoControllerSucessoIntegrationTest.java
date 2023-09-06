@@ -43,7 +43,7 @@ public class AssociadoControllerSucessoIntegrationTest {
     void sucessoAoCadastrarAssociado() {
         var associadoRequestDTO = AssociadoRequestDTO.builder()
                 .nome("joao")
-                .documento("12312312312")
+                .documento("19570411023")
                 .tipoPessoa(TipoPessoa.PF)
                 .build();
 

@@ -79,6 +79,9 @@ public class AssociadoService {
 
     public boolean validaDocumento(String documento) {
 
+        documento = documento.replace("-" , "");
+        documento = documento.replace("." , "");
+
         if (documento.length() == 11) {
             CPFValidator cpfValidator = new CPFValidator();
             try {
